@@ -1,0 +1,15 @@
+# files
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.idb
+*.ipch
+*.pch
+*.db
+*.enc
+*.tlog
+*.ps1
+
+# directory
+stage/
