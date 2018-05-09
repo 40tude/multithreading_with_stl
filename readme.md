@@ -1,39 +1,48 @@
+# About the readers
+- If you know multithreading, please "Fly, you fools"
+- Otherwise knowing I take some time to put black on white what I red/saw/heard your're more than welcome if you have constructve feedback
+- For the rest, as a reader you're supposed to 
+    - know some C++
+    - have spent some time looking around for information about multithreading (youtube, book, web pages...)
+    - be interrested in code snippets which could help you quickly experiments with what you learnt so far elsewhere
+    - be willing to avoid the very low level thread API provided by your beloved platform (pthread and others)
+    - trust the C++ committee to improve the high level tooling at our disposal
+
 # About the chapters
-- The topic is divided in chapter
-- Since I don't know for sure what will happen, today I have 15 chapters numbered from 010 to 150
-- Doing so, if at one point I need to insert more chapters I can name them 015 and 016 for example.
-- I will not hesitate to reorder the chapters if I really need.
+- The topic is divided in chapters
+- Since I don't know what will happen when I will add new chapters, even if today I already have 15 chapters they are numbered from 010 to 150
+- Doing so, if at one point, I need to insert more chapters then I can name them 015 and 016 for example.
+- However I will not hesitate to reorder the chapters if I really need.
 
 # About the setup
-- Windows 10
-- My Microsoft compiler is usually up to date. Today (May, 9 2017) it is described as : C/C++ version 19.14.26428.1 for x64
-- VS Code to edit and build the code snippet. I don't use Visual Studio because the code consist of one single file. I wanted to keep the setup as light as possible (yes, I know Visual Studio can work without project nor Solution)
-- All the code target x64 and is compiled with std=c++17
-- If you have another IDE, you should be able to copy and paste the C++ code and compile it. In worst case 
-- You may be interrested in readng this page : https://www.40tude.fr/blog/how-to-compile-cpp-code-with-vscode-cl/
+- **OS :** So far I did the testing under Windows 10
+- **Compiler :** I use Microsoft compiler. It is usually up to date. Today (May, 9 2017) it is self described as : C/C++ version 19.14.26428.1 for x64. All the code target x64 and it is compiled with std=c++17
+- **IDE :** I propose to work with VS Code to edit and build the code snippets. I don't use Visual Studio here because each chapter consist of one single .cpp file. I wanted to keep the setup as light as possible (and yes, I know, Visual Studio can work without project nor solution but to tell the thruth I'm not yet able to do what I want in this mode)
+- You might be interrested in readng this page to learn the detail about the setup : https://www.40tude.fr/blog/how-to-compile-cpp-code-with-vscode-cl/
+- If you have another IDE, you should be able to copy and paste the C++ source code and compile it.  
 
 # About the source code
 - Each chapter consist of a single source code
 - Each source code consist of one or more code section
-- Each section is physically separated from the previous one by at least 10 lines
-- Only one section can be active at one time otherwise the source contains 2 main() functions and it cannot be built. 
-- So... Get prepareed to use / and * or to use CTRL+(K, C) and CTRL+(K, U) to comment and uncomment sections of code
-- Each code section is autonomous. This means that each uncommented section can be compile and build on its own. 
+- Each code section is physically separated from the previous one by at least 10 lines (this help to catch the eyes)
+- Obviously, only one section can be active at one time otherwise the source contains 2 main() functions and it cannot be built. 
+- So... Get prepared to use / and * or to use CTRL+(K, C) and CTRL+(K, U) to comment and uncomment sections of code
+- Again, most code sections are autonomous. This means that each uncommented section can be compiled and build on its own. If the section cannot compile or crash at run time a comment warn you at the top of the section of code.
 - Each code section contains a fair amount of comments
 - These comments usually starts at row 81 (moderns screen and today resolution allow such setup)
-- When needed, each comment starts with a number. In this case read the comments following the numbers in increasing order. 
-- While progressing along the main.cpp file, if one section of code is an improvment of the previous one then we avoid to repeat the same comments in order to ease the reading of the new section.
+- When needed, each comment on the right starts with a number. In this case read the comments following the numbers in increasing order. 
+- While progressing along one main.cpp file, if one section of code is an improvment of the previous one then we avoid to repeat the same comments in order to ease the reading of the new section.
 
 # About the process
 ## If you use VS code and cl
 1. Open a developper console
 2. Reach the directory of the chapter you're interrested in
-3. In the command line type : code . (don't forget the dot)
-4. Open the file main.cpp
-5. CTRL+SHIFT+B to build the code
-6. SHIFT+F5 to run the debug version
-7. Come back the the source and read the comments
-8. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. The debugger is your friend.
+3. On the command line interface type in : "code ." (don't forget the dot)
+4. Once in VS Code, open the file main.cpp
+5. Press CTRL+SHIFT+B to build the code (check tasks.json if needed)
+6. SHIFT+F5 to run the debug version of the code
+7. When the code ends, come back to the source and read the comments
+8. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. **The debugger is your friend!**
 8. Copy/paste, modify, improve the code. Accumulate experience even if to do so you have to break everything :-)  
 
 ## If you don't use cl but use VS Code
@@ -45,8 +54,10 @@
 5. CTRL+SHIFT+B to build the code
 6. SHIFT+F5 to run the debug version
 7. Come back to the source and read the comments
-8. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. The debugger is your friend.
+8. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. **The debugger is your friend!**
 8. Copy/paste, modify, improve the code. Accumulate experience even if to do so you have to break everything :-)  
+
+If under Windows you use clang with VS Code you might be interrested in this post : https://www.40tude.fr/blog/compile-cpp-code-with-vscode-clang/
 
 ## If you don't use cl nor VS Code
 1. Reach the folder of interrest 
@@ -55,7 +66,7 @@
 4. Build the code
 5. Run the debug version
 6. Come back to the source and read the comments
-7. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. The debugger is your friend.
+7. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. **The debugger is your friend!**
 8. Copy/paste, modify, improve the code. Accumulate experience even if to do so you have to break everything :-)  
 
 
