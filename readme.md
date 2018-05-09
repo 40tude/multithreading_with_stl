@@ -7,6 +7,7 @@
     - be interrested in code snippets which could help you quickly experiments with what you learnt so far elsewhere
     - be willing to avoid the very low level thread API provided by your beloved platform (pthread and others)
     - trust the C++ committee to improve the high level tooling at our disposal
+- Keep in mind this is not a multithreading course but instead a set of code snippets that helps to experiment what you learnt elsewhere.
 
 # About the chapters
 - The topic is divided in chapters

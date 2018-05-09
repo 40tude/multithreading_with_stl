@@ -12,7 +12,7 @@
 // Low level code with threads
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-/**/                                                                            // <=====  commenting/uncommenting starts here
+/**/                                                                           // <=====  commenting/uncommenting starts here
 #include <iostream>
 #include <thread>
 
@@ -26,18 +26,22 @@ int main(){
   std::thread my_thread(MyFunction);                                            // my_thread starts at this point
   
   // Do some stuff in main()...
-  std::this_thread::sleep_for(100ms); 
+  std::this_thread::sleep_for(100ms);                                           // In real life thsi doe'nt work that way. 
+                                                                                // See the other code section below
+                                                                                // At least for the understand that the main thread is doing someting (sleeping)
+                                                                                // while at the same time my_thread is doing something else (executes MyFunction)
 
   my_thread.join();                                                             // main() waits for my_thread
                             
   //my_thread.detach();                                                         // If instead of joining, the thread is detached then my_thread becomes a deamon process
                                                                                 // In such case nothing may be displayed on screen because main() may end before the thread
-  std::cout << "Strike ENTER to exit :";                                        // => synchro mechanisms between threads are needed
+  std::cout << "Strike ENTER to exit :";                                        // This means that synchro mechanisms between threads are needed
   std::cin.get();
 }                                                                               // If 2 threads are sharing any ressource (here std::cout for example) the thread that own the resource 
                                                                                 // (here the main() function) should not leave as long as the other thread is using the resource
-                                                                                // This also apply to global and static variables/object in the case of a detached thread 
-                                                                                // The main() function may finish while the detached thread may need to access a global variable...
+
+                                                                                // Pay attantion. This also apply to global and static variables/objects in the case of a detached thread 
+                                                                                // The main() function may finish while the detached thread may need to access a global variable...Ooops
 
                                                                                 // We can only detach() or join() a thread only ONCE but one can check if the thread is joinnable
                                                                                 // if(my_thread.joinable()){
@@ -54,7 +58,7 @@ int main(){
 
 
 
-// High level code with async (C++11 prefered way?)
+// Higher level code with async (C++11 prefered way?)
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -64,7 +68,7 @@ int main(){
 
 int DisplayChars(char a_char){
   std::default_random_engine my_dre(a_char);
-  std::uniform_int_distribution<> id(10, 1000);                                 // default template parameter is int
+  std::uniform_int_distribution<> id(10, 1000);                                 // the default template parameter of uniform_int_distribution is int
 
   for(int i=0; i<20; ++i){
     std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
@@ -86,14 +90,15 @@ int main(){
   std::cout << "f2() works in the foreground\n\n";
 
   auto result1 {std::async(fn1)};                                               // result1 is a future
-                                                                                // a future is a place where, in the future, we will get a value
+                                                                                // a future is a place where, in the future, we will get a value from
                                                                                 // fn1 may start now, later or never
 
   int result2 = fn2();                                                          // result2 is an int
                                                                                 // fn2 is executed here and now in the main() thread
+                                                                                // Ideally while fn1 is working on one core, fn2 is executed on another core.
 
   int result = result1.get() + result2;                                         // .get() blocks and waits until the result is available
-                                                                                // compare to threads with the help of result1.get() we have returned values
+                                                                                // compare to threads with the help of result1.get() we have a returned value from an async()
   std::cout << "\n\nThe sum of fn1() and fn2() equals : " << result << '\n';
 
   std::cout << "Strike ENTER to exit :";                                        
@@ -110,7 +115,7 @@ int main(){
 
 
 
-// Same code with threads
+// Same code as above but with threads
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -120,7 +125,7 @@ int main(){
 
 int DisplayChars(char a_char){
   std::default_random_engine my_dre(a_char);
-  std::uniform_int_distribution<> id(10, 1000);                                 // default template parameter is int
+  std::uniform_int_distribution<> id(10, 1000);                                 
 
   for(int i=0; i<20; ++i){
     std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
