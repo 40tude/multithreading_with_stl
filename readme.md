@@ -1,6 +1,6 @@
 # About the readers
 - If you know multithreading, please "Fly, you fools"
-- Otherwise knowing I take some time to put black on white what I red/saw/heard your're more than welcome if you have constructve feedback
+- Otherwise knowing that I take some time to put black on white what I red/saw/heard your're more than welcome if you have constructve feedback
 - For the rest, as a reader you're supposed to 
     - know some C++
     - have spent some time looking around for information about multithreading (youtube, book, web pages...)
