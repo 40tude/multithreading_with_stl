@@ -10,11 +10,12 @@
 
 
 // Any callable object can be use to create a thread object
+// See http://en.cppreference.com/w/cpp/concept/Callable
 // We already saw how to run a function in a thread (see chap_010)
 // Here is an example with a functor (a class with a function call operator overloaded)
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-/**/
+/*
 #include <iostream>
 #include <thread>
 
@@ -53,7 +54,7 @@ int main(){
   std::cout << "Strike ENTER to exit :";
   std::cin.get();
 }
-/**/
+*/
 
 
 
@@ -115,7 +116,6 @@ int main(){
 #include <future>
 
 struct MyStructor{
-  public:
   void operator()(){
     for (int i=0; i<40; ++i){
       std::cout.put('_').flush();
@@ -139,6 +139,89 @@ int main(){
   std::cin.get();
 }
 */
+
+
+
+
+
+
+
+
+
+// method of a class
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+/*
+#include <iostream>
+#include <thread>
+
+struct MyClass{
+  void loooong_call(){
+    for (int i=0; i<40; ++i){
+      std::cout.put('_').flush();
+    }
+  }
+};
+
+int main(){
+
+  MyClass my_instance;
+  
+  std::thread my_thread(&MyClass::loooong_call, my_instance);                                            // Another way to launch the functor fct as a thread. It saves one line of code
+
+  // Do some stuff in main() thread
+  for(int i=0; i<40; ++i){
+    std::cout.put('-').flush();
+  }
+
+  my_thread.join();  
+
+  std::cout << "\n\nStrike ENTER to exit :";
+  std::cin.get();
+}
+*/
+
+
+
+
+
+
+
+
+
+// method of a class with async()
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+/**/
+#include <iostream>
+#include <future>
+
+struct MyClass{
+  void loooong_call(){
+    for (int i=0; i<40; ++i){
+      std::cout.put('/').flush();
+    }
+  }
+};
+
+int main(){
+
+  MyClass my_instance;
+  
+  auto result = std::async(&MyClass::loooong_call, my_instance);                                            // Another way to launch the functor fct as a thread. It saves one line of code
+
+  // Do some stuff in main() thread
+  for(int i=0; i<40; ++i){
+    std::cout.put('\\').flush();
+  }
+
+  result.get();  
+
+  std::cout << "\n\nStrike ENTER to exit :";
+  std::cin.get();
+}
+/**/
+
 
 
 
