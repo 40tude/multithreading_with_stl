@@ -40,19 +40,21 @@
 1. Open the x64 Developer Comand Prompt (availble in the Visual Studio 2017 group)
 2. Reach the directory of the chapter you're interrested in
 3. On the command line interface type in : "code ." (don't forget the dot)
-4. Press CTRL+SHIFT+B to build the code (check tasks.json if needed)
-5. Press SHIFT+F5 to run the debug version of the code
-6. When the code ends, back in VS Code, open main.cpp and read the comments
-7. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. **The debugger is your friend!**
-8. Copy/paste, modify, improve the code. Accumulate experience even if to do so you have to break everything :-)  
+4. Press CTRL+SHIFT+D and make sure "(Windows) Launch" is selected
+5. Press CTRL+SHIFT+B to build the code (check tasks.json if needed)
+6. Press SHIFT+F5 to run the debug version of the code
+7. When the code ends, back in VS Code, open main.cpp and read the comments
+8. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. **The debugger is your friend!**
+9. Copy/paste, modify, improve the code. Accumulate experience even if to do so you have to break everything :-)  
 
 ## You use VS code and g++ under Linux
-3. Launch VS Code and open the directory you're interrested in (CTRL+K, CTRL+O)
-4. Press ALT+T, select "Execute the task..." option, then select "Linux Debug" (check tasks.json if needed)
-5. Press SHIFT+F5 to run the debug version of the code
-6. When the code ends, back in VS Code, open main.cpp and read the comments
-7. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. **The debugger is your friend!**
-8. Copy/paste, modify, improve the code. Accumulate experience even if to do so you have to break everything :-)  
+1. Launch VS Code and open the directory you're interrested in (CTRL+K, CTRL+O)
+2. Press ALT+T, select "Execute the task..." option, then select "Linux Debug" (check tasks.json if needed)
+3. Press CTRL+SHIFT+D and make sure "(gdb) Launch" is selected
+4. Press SHIFT+F5 to run the debug version of the code
+5. When the code ends, back in VS Code, open main.cpp and read the comments
+6. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. **The debugger is your friend!**
+7. Copy/paste, modify, improve the code. Accumulate experience even if to do so you have to break everything :-)  
 
 ## You don't use cl but you use VS Code 
 1. Open VS Code
@@ -64,7 +66,7 @@
 6. SHIFT+F5 to run the debug version
 7. When the debug version build and run, come back to the source and read the comments
 8. Set breakpoints, debug and trace the code again and again. Ideally you should not need any console output. **The debugger is your friend!**
-8. Copy/paste, modify, improve the code. Accumulate experience even if to do so you have to break everything :-)  
+9. Copy/paste, modify, improve the code. Accumulate experience even if to do so you have to break everything :-)  
 
 If under Windows you use clang with VS Code you might be interrested in this post : https://www.40tude.fr/blog/compile-cpp-code-with-vscode-clang/
 
