@@ -1,4 +1,4 @@
-// Under Linux : g++ main.cpp -O3 -pthread -std=c++17
+// Introduction
 
 
 
@@ -26,29 +26,29 @@ int main(){
   std::thread my_thread(MyFunction);                                            // my_thread starts at this point
   
   // Do some stuff in main()...
-  std::this_thread::sleep_for(100ms);                                           // In real life thsi doe'nt work that way. 
-                                                                                // See the other code section below
-                                                                                // At least for the understand that the main thread is doing someting (sleeping)
+  std::this_thread::sleep_for(100ms);                                           // In real life this doe'nt work that way. 
+                                                                                // See the other the code sections below
+                                                                                // Here, understand that the main thread is doing someting (sleeping)
                                                                                 // while at the same time my_thread is doing something else (executes MyFunction)
 
   my_thread.join();                                                             // main() waits for my_thread
                             
   //my_thread.detach();                                                         // If instead of joining, the thread is detached then my_thread becomes a deamon process
-                                                                                // In such case nothing may be displayed on screen because main() may end before the thread
-  std::cout << "Strike ENTER to exit :";                                        // This means that synchro mechanisms between threads are needed
+                                                                                // In such case nothing may be displayed on screen if main() ends before the thread
+  std::cout << "Strike ENTER to exit :";                                        // This means that synchronization mechanisms between threads are needed
   std::cin.get();
-}                                                                               // If 2 threads are sharing any ressource (here std::cout for example) the thread that own the resource 
+}                                                                               // If 2 threads are sharing any ressource (here they share std::cout) the thread that own the resource 
                                                                                 // (here the main() function) should not leave as long as the other thread is using the resource
 
                                                                                 // Pay attantion. This also apply to global and static variables/objects in the case of a detached thread 
                                                                                 // The main() function may finish while the detached thread may need to access a global variable...Ooops
 
-                                                                                // We can only detach() or join() a thread only ONCE but one can check if the thread is joinnable
+                                                                                // We can detach() or join() a thread only ONCE but one can check if the thread is joinnable
                                                                                 // if(my_thread.joinable()){
                                                                                 //   my_thread.join();
                                                                                 // }
 
-/**/                                                                              // <=====  commenting/uncommenting ends here
+/**/                                                                            // <=====  commenting/uncommenting ends here
 
 
 
@@ -93,12 +93,12 @@ int main(){
                                                                                 // a future is a place where, in the future, we will get a value from
                                                                                 // fn1 may start now, later or never
 
-  int result2 = fn2();                                                          // result2 is an int
+  int result2 = fn2();                                                          // result2 is a regular int
                                                                                 // fn2 is executed here and now in the main() thread
-                                                                                // Ideally while fn1 is working on one core, fn2 is executed on another core.
+                                                                                // Ideally while fn1 is working on one core, fn2 is executed on another core
 
   int result = result1.get() + result2;                                         // .get() blocks and waits until the result is available
-                                                                                // compare to threads with the help of result1.get() we have a returned value from an async()
+                                                                                // compare to threads, with the help of result1.get(), we have a returned value from an async()
   std::cout << "\n\nThe sum of fn1() and fn2() equals : " << result << '\n';
 
   std::cout << "Strike ENTER to exit :";                                        
@@ -157,3 +157,4 @@ int main(){
   std::cin.get();
 }
 */                                                                               
+
