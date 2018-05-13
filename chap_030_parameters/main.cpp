@@ -145,7 +145,7 @@ int main(){
   my_function1(my_message);                                                     // 2 - Pass the message as a reference
   std::cout << "Back in main() : " << my_message << '\n';                       // 4 - In effect, the message has been modified
   
-  auto my_thread = async(my_function2, my_message);                               // 5 - Pass the parameter to the thread by reference
+  auto my_thread = async(my_function2, my_message);                             // 5 - Pass the parameter to the thread by reference
   my_thread.get();  
   std::cout << "From main()    : " << my_message << '\n';                       // 8 - but the modification does not propagate back to the main() function
 
