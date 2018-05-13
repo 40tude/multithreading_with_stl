@@ -12,7 +12,7 @@
 // Low level code with threads
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-// /*                                                                          // <=====  commenting/uncommenting starts here
+/*                                                                          // <=====  commenting/uncommenting starts here
 #include <iostream>
 #include <thread>
 
@@ -48,7 +48,7 @@ int main(){
                                                                                 //   my_thread.join();
                                                                                 // }
 
-// */                                                                           // <=====  commenting/uncommenting ends here
+*/                                                                           // <=====  commenting/uncommenting ends here
 
 
 
@@ -170,7 +170,7 @@ int main(){
 // packaged tasks also provides a future from which we .get() the return value
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-/*
+// /*
 #include <iostream>
 #include <future>
 
@@ -204,7 +204,7 @@ int main(){
                                                                                 // No way to get the return value easily
                                                                                 // A packaged task always returns void
 
-  int flight_length = my_packaged_task.get_future().get();                      // This is the way to get the result
+  auto flight_length = my_packaged_task.get_future().get();                     // This is the way to get the result
                                                                                 // Compared with an async() function a packaged_task object provides a future
                                                                                 // from which we can .get() the returned value
   std::cout << "The flight length of " << my_value << " is " << flight_length << '\n';                               
@@ -212,4 +212,4 @@ int main(){
   std::cout << "\nStrike ENTER to exit :";
   std::cin.get();
 }
-*/
+// */
