@@ -148,7 +148,7 @@ int main(){
 
 
 
-// method of a class
+// Run a method of a class in a thread
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -167,7 +167,7 @@ int main(){
 
   MyClass my_instance;
   
-  std::thread my_thread(&MyClass::loooong_call, my_instance);                                            // Another way to launch the functor fct as a thread. It saves one line of code
+  std::thread my_thread(&MyClass::loooong_call, my_instance);                                            
 
   // Do some stuff in main() thread
   for(int i=0; i<40; ++i){
@@ -189,7 +189,7 @@ int main(){
 
 
 
-// method of a class with async()
+// Same as above but with async()
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /**/
@@ -208,7 +208,7 @@ int main(){
 
   MyClass my_instance;
   
-  auto result = std::async(&MyClass::loooong_call, my_instance);                                            // Another way to launch the functor fct as a thread. It saves one line of code
+  auto result = std::async(&MyClass::loooong_call, my_instance);                                            
 
   // Do some stuff in main() thread
   for(int i=0; i<40; ++i){

@@ -36,6 +36,7 @@
 - While reading one file, if one section of code is an improvement of the previous one, then, the comments are not repeated in order to ease the reading of the new section.
 
 # About the process
+
 ## You use VS code and cl under Windows
 1. Open the x64 Developer Comand Prompt (availble in the Visual Studio 2017 group)
 2. Reach the directory of the chapter you're interrested in
