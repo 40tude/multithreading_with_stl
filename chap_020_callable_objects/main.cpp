@@ -12,7 +12,7 @@
 // Any callable object can be use to create a thread object
 // See http://en.cppreference.com/w/cpp/concept/Callable
 // We already saw how to run a function in a thread (see chap_010)
-// Here is an example with a functor (a class with a function call operator overloaded)
+// Here is an example with a functor (a class with an overloaded function call operator)
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -125,16 +125,17 @@ struct MyStructor{
 
 int main(){
   
-  auto result {std::async(MyStructor())};                                           
-
+  auto result {std::async(MyStructor())};                                       // result is a future
+                                                                                // a future is an object from which we can get a value later (not used here)                                        
   // Do some stuff in main() thread
   for(int i=0; i<40; ++i){
     std::cout.put('-').flush();
   }
 
   //result.get();                                                               // no need to get since there is no return value
-                                                                                // However, the "Strik..." sentence may be displayed
-                                                                                // before the thread ends. Make some experiments :-)
+                                                                                // However, the "Strike..." sentence may be displayed
+                                                                                // before the thread ends. 
+                                                                                // Make some experiments, uncommenting/commenting the .get() call 
   std::cout << "\n\nStrike ENTER to exit :";
   std::cin.get();
 }
@@ -189,10 +190,10 @@ int main(){
 
 
 
-// Same as above but with async()
+// Pass a method of a class to an async()
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-/**/
+/*
 #include <iostream>
 #include <future>
 
@@ -220,7 +221,7 @@ int main(){
   std::cout << "\n\nStrike ENTER to exit :";
   std::cin.get();
 }
-/**/
+*/
 
 
 
@@ -231,7 +232,7 @@ int main(){
 
 
 
-// function object
+// Run a function object in a thread
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -262,7 +263,7 @@ int main(){
 
 
 
-// function object can help to pass parameters to threads
+// A function object can help to pass parameters to threads
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -303,7 +304,7 @@ int main(){
 
 
 
-// Same as above but with async()
+// Pass a function object to an async()
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -340,7 +341,7 @@ int main(){
 
 
 
-// lambda
+// Run a lambda in a thread
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -373,7 +374,7 @@ int main(){
 
 
 
-// same as above with async()
+// Pass a lambda to an async()
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -397,3 +398,157 @@ int main(){
   std::cin.get();
 }
 */
+
+
+
+
+
+
+
+
+
+
+// packaged tasks provide a way to prepare a task and to run it in a later
+// In addition packaged tasks also provides a future from which we .get() the return value
+// The code below IS NOT multithread. 
+// It demonstrates how to setup a packaged_task, call it synchronously from main() and get its return value
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+/*
+#include <iostream>
+#include <future>
+
+int syracuse(unsigned long n){
+  int counter=0;
+  while(n>1){
+    if(n%2){
+      n = n*3 + 1;                                                              // n is odd
+    }else{                                                  
+      n = n/2;                                                                  // n is even
+    }
+    counter++;
+  }
+  return counter;
+}
+
+int main(){
+
+  std::packaged_task <int(unsigned long)> my_packaged_task(syracuse);           // A packaged task is an object
+                                                                                // This is a templated task 
+                                                                                // It is parametrized with the function signature of its task
+                                                                                // See syracuse() definition which takes an unsigned long and returns an int
+  
+  // ...                                                                        // At this point, the packaged task is created
+                                                                                // but there is no need to start the thread now 
+
+  auto my_value = 837'799UL;                                                    // Try differents values : 27, 26'623, 511'935 or 837'799
+  my_packaged_task(my_value);                                                   // Later on, the task is invoked
+
+  //int flight_length = my_packaged_task(11);                                   // This won't work                                         
+                                                                                // No way to get the return value easily
+                                                                                // A packaged task always returns void
+
+  auto flight_length = my_packaged_task.get_future().get();                     // This is the way to get the result
+                                                                                // Compared with an async() function a packaged_task object provides a future
+                                                                                // from which we can .get() the returned value
+  std::cout << "The flight length of " << my_value << " is " << flight_length << '\n';                               
+  
+  std::cout << "\nStrike ENTER to exit :";
+  std::cin.get();
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// run a packaged_task in a thread 
+// we can use packaged_task to get a return value from a thread
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+/*
+#include <iostream>
+#include <future>
+
+using namespace std::chrono_literals;
+
+int fn1(){
+  std::cout << "Hello from fn1()\n";  
+  return 42;
+}
+
+int main(){
+  std::packaged_task <int(void)> my_packaged_task(fn1);   
+  auto my_future = my_packaged_task.get_future();                               // Create a future before the packaged task is moved into the thread 
+
+  std::thread my_thread {std::move(my_packaged_task)};                          // a packaged_task cannot be copied but can be moved                             
+
+  // Do something in main()
+  std::this_thread::sleep_for(100ms); 
+  
+  std::cout << "In main() the result is : " << my_future.get()  << '\n';
+
+  my_thread.join();                                                             // Never forget to join the htread
+
+  std::cout << "\nStrike ENTER to exit :";                                        
+  std::cin.get();
+}                                                                                                                                                          
+*/  
+
+
+
+
+
+
+
+
+// Pass a packaged_task to an async() 
+// Over enginered? 
+// In fact we can achieve the same result more simply (see chap 010) 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// /*
+#include <iostream>
+#include <future>
+
+using namespace std::chrono_literals;
+
+int fn1(){
+  std::cout << "Hello from fn1()\n";  
+  return 42;
+}
+
+int main(){
+  std::packaged_task <int(void)> my_packaged_task(fn1);   
+  auto my_future = my_packaged_task.get_future();                               // get a future before the packaged_task is moved
+
+  std::async(std::move(my_packaged_task));                                      // a packaged_task cannot be copied but can be moved 
+                                                                                // compare to previous sample code in chap_010 there is nothing like  
+                                                                                // auto result = std::async(std::move(my_packaged_task));   
+                                                                                // since the future is provided by the packaged task                                               
+  // Do something in main()
+  std::this_thread::sleep_for(100ms); 
+  
+  std::cout << "In main() the result is : " << my_future.get()  << '\n';
+
+  std::cout << "\nStrike ENTER to exit :";                                        
+  std::cin.get();
+}                                                                                                                                                          
+// */  
+
+
+// This is all fine but what we want is to pass parameters to threads and get returned values

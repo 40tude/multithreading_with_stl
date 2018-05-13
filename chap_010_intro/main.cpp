@@ -12,7 +12,7 @@
 // Low level code with threads
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-/*                                                                          // <=====  commenting/uncommenting starts here
+// /*                                                                          // <=====  commenting/uncommenting starts here
 #include <iostream>
 #include <thread>
 
@@ -35,7 +35,7 @@ int main(){
                             
   //my_thread.detach();                                                         // If instead of joining, the thread is detached then my_thread becomes a deamon process
                                                                                 // In such case nothing may be displayed on screen if main() ends before the thread
-  std::cout << "Strike ENTER to exit :";                                        // This means that synchronization mechanisms between threads are needed
+  std::cout << "\nStrike ENTER to exit :";                                        // This means that synchronization mechanisms between threads are needed
   std::cin.get();
 }                                                                               // If 2 threads are sharing any ressource (here they share std::cout) the thread that own the resource 
                                                                                 // (here the main() function) should not leave as long as the other thread is using the resource
@@ -48,7 +48,7 @@ int main(){
                                                                                 //   my_thread.join();
                                                                                 // }
 
-*/                                                                           // <=====  commenting/uncommenting ends here
+// */                                                                           // <=====  commenting/uncommenting ends here
 
 
 
@@ -59,6 +59,40 @@ int main(){
 
 
 // Higher level code with async (C++11 prefered way?)
+// Same as above
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+/*                                                                          
+#include <iostream>
+#include <future>
+
+using namespace std::chrono_literals;
+
+void MyFunction(){
+  std::cout << "Hello from thread named : " << __FUNCTION__ << '\n';
+}
+
+int main(){
+
+  std::async(MyFunction);                                                       // Run the next example where a returned value comes back from the thread
+                                                                                // This is where async functions shine compare to threads
+  // Do some stuff in main()...
+  std::this_thread::sleep_for(100ms);                                           
+                                                                                
+  std::cout << "\nStrike ENTER to exit :";                                      
+  std::cin.get();
+}                                                                               
+*/                                                                           
+
+
+
+
+
+
+
+
+
+
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -101,7 +135,7 @@ int main(){
                                                                                 // compare to threads, with the help of result1.get(), we have a returned value from an async()
   std::cout << "\n\nThe sum of fn1() and fn2() equals : " << result << '\n';
 
-  std::cout << "Strike ENTER to exit :";                                        
+  std::cout << "\nStrike ENTER to exit :";                                        
   std::cin.get();
 }                                                                                                                                                          
 */  
@@ -157,59 +191,3 @@ int main(){
   std::cin.get();
 }
 */                                                                               
-
-
-
-
-
-
-
-
-
-// packaged tasks provide a way to prepare a task and to run it in a thread later
-// packaged tasks also provides a future from which we .get() the return value
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
-// /*
-#include <iostream>
-#include <future>
-
-int syracuse(unsigned long n){
-  int counter=0;
-  while(n>1){
-    if(n%2){
-      n = n*3 + 1;                                                              // n is odd
-    }else{                                                  
-      n = n/2;                                                                  // n is even
-    }
-    counter++;
-  }
-  return counter;
-}
-
-int main(){
-
-  std::packaged_task <int(unsigned long)> my_packaged_task(syracuse);           // A packaged task is an object
-                                                                                // This is a templated task 
-                                                                                // It is parametrized with the function signature of its task
-                                                                                // See syracuse() definition which takes an unsigned long and returns an int
-  
-  // ...                                                                        // At this pont, the packaged task is created
-                                                                                // but there is no need to start the thread now 
-
-  auto my_value = 837'799UL;                                                    // Try differents values : 27, 26'623, 511'935 or 837'799
-  my_packaged_task(my_value);                                                   // Later on, the task is invoked
-
-  //int flight_length = my_packaged_task(11);                                   // This won't work                                         
-                                                                                // No way to get the return value easily
-                                                                                // A packaged task always returns void
-
-  auto flight_length = my_packaged_task.get_future().get();                     // This is the way to get the result
-                                                                                // Compared with an async() function a packaged_task object provides a future
-                                                                                // from which we can .get() the returned value
-  std::cout << "The flight length of " << my_value << " is " << flight_length << '\n';                               
-  
-  std::cout << "\nStrike ENTER to exit :";
-  std::cin.get();
-}
-// */
