@@ -272,16 +272,16 @@ int main(){
 
 using namespace std::chrono_literals;
 
-void Say_Hello_n_times(int const n){
+void Say_Hello_n_Times(int const n){
   for(int i=0; i<n; ++i) std::cout << "From thread : Hello\n";
 }
 
 int main(){
   
-  //std::function<void()> my_function = std::bind(Say_Hello_n_times, 3);        // bind the function and its parameter. 
+  //std::function<void()> my_function = std::bind(Say_Hello_n_Times, 3);        // bind the function and its parameter. 
                                                                                 // my_function is a function object that takes no parameter and returns void 
 
-  auto my_function = std::bind(Say_Hello_n_times, 5);                           // same thing as above
+  auto my_function = std::bind(Say_Hello_n_Times, 5);                           // same thing as above
   
   std::thread my_thread(my_function);                                           // run the function object in a thread
 
@@ -313,13 +313,13 @@ int main(){
 
 using namespace std::chrono_literals;
 
-void Say_Hello_n_times(int const n){
+void Say_Hello_n_Times(int const n){
   for(int i=0; i<n; ++i) std::cout << "From thread : Hello\n";
 }
 
 int main(){
 
-  auto my_function = std::bind(Say_Hello_n_times, 30);                           
+  auto my_function = std::bind(Say_Hello_n_Times, 30);                           
   auto result = async(my_function);          
 
   // Do some stuff in the main() thread

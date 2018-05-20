@@ -47,7 +47,10 @@
     "xstddef": "cpp",
     "xstring": "cpp",
     "xtr1common": "cpp",
-    "xutility": "cpp"
+    "xutility": "cpp",
+    "resumable": "cpp",
+    "random": "cpp",
+    "xthread": "cpp"
   },
   "editor.tabSize": 2
 }

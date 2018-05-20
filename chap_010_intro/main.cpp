@@ -12,14 +12,14 @@
 // Low level code with threads
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-// /*                                                                          // <=====  commenting/uncommenting starts here
+/*                                                                          // <=====  commenting/uncommenting starts here
 #include <iostream>
 #include <thread>
 
 using namespace std::chrono_literals;
 
 void MyFunction(){
-  std::cout << "Hello from thread named : " << __FUNCTION__ << '\n';
+  std::cout << "Hello from thread running function named : " << __FUNCTION__ << '\n';
 }
 
 int main(){
@@ -33,9 +33,9 @@ int main(){
 
   my_thread.join();                                                             // main() waits for my_thread
                             
-  //my_thread.detach();                                                         // If instead of joining, the thread is detached then my_thread becomes a deamon process
+  //my_thread.detach();                                                         // If instead of joining, the thread is detached then my_thread becomes a deamon thread
                                                                                 // In such case nothing may be displayed on screen if main() ends before the thread
-  std::cout << "\nStrike ENTER to exit :";                                        // This means that synchronization mechanisms between threads are needed
+  std::cout << "\nStrike ENTER to exit :";                                      // This means that synchronization mechanisms between threads are needed
   std::cin.get();
 }                                                                               // If 2 threads are sharing any ressource (here they share std::cout) the thread that own the resource 
                                                                                 // (here the main() function) should not leave as long as the other thread is using the resource
@@ -48,7 +48,7 @@ int main(){
                                                                                 //   my_thread.join();
                                                                                 // }
 
-// */                                                                           // <=====  commenting/uncommenting ends here
+*/                                                                           // <=====  commenting/uncommenting ends here
 
 
 
@@ -58,8 +58,9 @@ int main(){
 
 
 
-// Higher level code with async (C++11 prefered way?)
+
 // Same as above
+// Higher level code with async (C++ prefered way?)
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*                                                                          
@@ -73,16 +74,70 @@ void MyFunction(){
 }
 
 int main(){
-
-  std::async(MyFunction);                                                       // Run the next example where a returned value comes back from the thread
-                                                                                // This is where async functions shine compare to threads
+  
+  auto result = std::async(MyFunction);                                         // Set a breakpoint and check when the message is sent to the console 
+  
   // Do some stuff in main()...
   std::this_thread::sleep_for(100ms);                                           
-                                                                                
-  std::cout << "\nStrike ENTER to exit :";                                      
+
+  result.get();
+
+  std::cout << "\n\nStrike ENTER to exit :";                                      
   std::cin.get();
 }                                                                               
 */                                                                           
+
+
+
+
+
+
+
+
+
+
+// Morerealistic example
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+/*
+#include <iostream>
+#include <random>
+#include <future>
+
+void fn1(){
+  char const a_char {'_'};
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 // the default template parameter of uniform_int_distribution is int
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+  }
+}
+
+int main(){
+
+  auto result = std::async(fn1);                                                // fn1 may start now, later or never
+
+  // Do some stuff in main()...
+  {
+    char const a_char {'-'};
+
+    std::default_random_engine my_dre(a_char);
+    std::uniform_int_distribution<> id(10, 1000);                               
+
+    for(int i=0; i<20; ++i){
+      std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+      std::cout.put(a_char).flush();
+    }
+  }
+
+  result.get();
+  std::cout << "\n\nStrike ENTER to exit :";                                        
+  std::cin.get();
+}                                                                                                                                                          
+*/  
 
 
 
@@ -100,7 +155,60 @@ int main(){
 #include <random>
 #include <future>
 
-int DisplayChars(char a_char){
+void fn1(){
+  char const a_char {'_'};
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+  }
+}
+
+void fn2(){
+  char const a_char {'-'};
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+  }
+}
+
+int main(){
+
+  auto result = std::async(fn1);                                                // fn1 may start now, later or never
+  fn2();                                                                        // fn2 is executed here and now in the main() thread
+                                                                                // Ideally while fn1 is working on one core, fn2 is executed on another core
+  
+  result.get();
+  std::cout << "\n\nStrike ENTER to exit :";                                        
+  std::cin.get();
+}                                                                                                                                                          
+*/  
+
+
+
+
+
+
+
+
+
+
+// getting a result from the async() task is easy
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+/*
+#include <iostream>
+#include <random>
+#include <future>
+
+int DisplayChars(char const a_char){
   std::default_random_engine my_dre(a_char);
   std::uniform_int_distribution<> id(10, 1000);                                 // the default template parameter of uniform_int_distribution is int
 
@@ -120,9 +228,6 @@ int fn2(){
 }
 
 int main(){
-  std::cout << "f1() works in the background\n";
-  std::cout << "f2() works in the foreground\n\n";
-
   auto result1 {std::async(fn1)};                                               // result1 is a future
                                                                                 // a future is a place where, in the future, we will get a value from
                                                                                 // fn1 may start now, later or never
@@ -131,8 +236,9 @@ int main(){
                                                                                 // fn2 is executed here and now in the main() thread
                                                                                 // Ideally while fn1 is working on one core, fn2 is executed on another core
 
-  int result = result1.get() + result2;                                         // .get() blocks and waits until the result is available
-                                                                                // compare to threads, with the help of result1.get(), we have a returned value from an async()
+  int result = result1.get() + result2;                                         // .get() blocks and waits until result1 is available
+                                                                                // Ideally fn1 is done and result1 is available immediatly
+                                                                                // compared to threads, with the help of result1.get(), we have a returned value from an async()
   std::cout << "\n\nThe sum of fn1() and fn2() equals : " << result << '\n';
 
   std::cout << "\nStrike ENTER to exit :";                                        
@@ -149,7 +255,7 @@ int main(){
 
 
 
-// Same code as above but with threads
+// Same code as above with threads
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
