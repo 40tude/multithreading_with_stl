@@ -9,45 +9,63 @@
 
 
 
-// If a thread is destroyed BEFORE it is joined or detached then the program
-// terminates 
-// We need to decide BEFORE the thread goes out of scope if we want to 
-// join() or detach() 
+// If a thread is destroyed BEFORE it is joined or detached then the program terminates 
+// We need to decide BEFORE the thread goes out of scope if we want to join() or detach() 
 // In the code below, everything works fine : no exception, no problem...
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
 /*
 #include <iostream>
 #include <thread>
+#include <random>
 
-void My_Thread_Function(){
-  std::cout << "Hello from thread " << __FUNCTION__ << '\n';
-}
+void fn1(){
+  char const a_char ='_';
 
-void My_Not_Throwing_Function(){
-  for(int i=0; i<10; ++i){
-    std::cout << "From My_Not_Throwing_Function() : " << i << '\n';
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
   }
 }
 
 int main(){
-  std::thread my_thread(My_Thread_Function); 
 
-  // Do some stuff in main()...
-  My_Not_Throwing_Function();                                                   
-
-  my_thread.join();                          
+  std::thread my_thread(fn1);                                                  
   
-  std::cout << "\nStrike ENTER to exit :";
+  // Do some stuff in main()...
+  {
+    char const a_char ='-';
+
+    std::default_random_engine my_dre(a_char);
+    std::uniform_int_distribution<> id(10, 1000);                                 
+
+    for(int i=0; i<20; ++i){
+      std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+      std::cout.put(a_char).flush();
+    }
+  }
+  my_thread.join();  
+
+  std::cout << "\n\nStrike ENTER to exit :";                                        
   std::cin.get();
 }
-*/
+*/                                                                               
 
 
 
+
+
+
+
+// Same as above but implements a try/catch block
+// The exception is thrown in the main() function, NOT in the thread
+// We must .join() in the catch blocK
+// However, if there is no exception, since we can .join() only once we need to think twice 
+// Remember : .join() could be skipped if an exception happens before the call to .join()
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-// /*
+/*
 #include <iostream>
 #include <thread>
 #include <random>
@@ -79,24 +97,30 @@ int main(){
       std::cout.put(a_char).flush();
       if (i==10) throw std::runtime_error( "Exception for the fun." );            // comment this line and run again
     }
-
   }catch(std::exception const& e){
-    std::cout << "Exception caught in main() : " << e.what() << '\n'; 
+    std::cout << "Exception caught in main() : " << e.what() << '\n';             // observe on screen how the thread continue after the catch
     my_thread.join();  
   }
 
-  if(my_thread.joinable()){
+  if(my_thread.joinable()){                                                       // if no exception then the thread is joinable otherwise it is not
     my_thread.join();  
   }
 
   std::cout << "\n\nStrike ENTER to exit :";                                        
   std::cin.get();
 }
-// */                                                                               
+*/                                                                               
 
 
 
 
+
+
+
+
+
+
+// Same as above but part of the code is now in fn2()
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -125,7 +149,7 @@ void fn2(){
   for(int i=0; i<20; ++i){
     std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
     std::cout.put(a_char).flush();
-    if (i==10) throw std::runtime_error( "Exception for the fun." );            // comment this line and run again
+    if (i==10) throw std::runtime_error( "Exception for the fun." );            
   }
 }
 
@@ -134,7 +158,7 @@ int main(){
   std::thread my_thread(fn1);                                                  
   
   try{
-    fn2();
+    fn2();                                                                      // fn2() is in a try block because it may throw
   }catch(std::exception const& e){
     std::cout << "Exception caught in main() : " << e.what() << '\n'; 
     my_thread.join();  
@@ -151,11 +175,13 @@ int main(){
 
 
 
-// Same as above but implements a try/catch block
-// The exception is thrown in the main() function, NOT in the thread
-// We want to .join() in a catch blocK
-// However, if there is no exception, since we can .join() only once we need to think twice 
-// .join() could be skipped if an exception happens before the call to .join()
+
+
+
+
+
+
+
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -198,86 +224,80 @@ int main(){
 */
 
 
-/*
-#include <iostream>
-#include <thread>
-
-void do_something(char a_char){
-  for(int k=0; k<1000; ++k){
-    std::cout.put(a_char).flush();
-  }
-  std::cout << "Thread " << a_char << "finished\n";
-}
-
-
-
-int main(){
-
-  std::thread t0(do_something, '\\');
-  std::thread t1(do_something, '-');
-  std::thread t2(do_something, '/');
-  std::thread t3(do_something, '-');
-
-  t3.join();
-  t2.join();
-  t1.join();
-  t0.join();
-
-  std::cout << "\nStrike ENTER to exit :";
-  std::cin.get();
-}
-*/
 
 
 
 
 
-// page 19 - concurrency in action
+
+
+
+
+
+
+
+
+// see also page 19 of concurrency in action
 // An exception in thrown in the main thread (NOT in the thread itself)
-// The code shows how to propagate the exception to main()
+// The code shows how to propagate the exception back to main()
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
 #include <iostream>
 #include <thread>
+#include <random>
 
-void do_something(int i){
-  for(int k=0; k<1000; ++k){
-    i++;
+void do_something(char const a_char){
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
   }
 }
 
 struct func{
-  int& m_i;
+  char& m_c;
   
-  func(int& i):m_i(i){}
+  func(char& c) : m_c {c} {}
   
   void operator()(){
-    for(unsigned j=0; j<10000000; ++j){
-      do_something(j);
-    }
+    do_something(m_c);
     std::cout << "The thread is done.\n";
   }
 };
 
 void do_something_in_current_thread(){
-  throw std::runtime_error( "Exception for the fun." );
+  char const a_char ='-';
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+    if (i==10) throw std::runtime_error( "Exception for the fun." );            
+  }
 }
 
 void f(){
-  std::cout << "f() starts : \n"; 
-
-  int some_local_state = 42;
+  char some_local_state = '_';
   func my_func(some_local_state);
   std::thread t(my_func);
+  
   try{
     do_something_in_current_thread();
   }catch(std::exception const& e){
-    t.join();
     std::cout << "Exception caught in f() : " << e.what() << '\n'; 
-    throw;
+    t.join();                                                                   // see in the console how t terminates before the execption is rethrown
+    throw;                                                                      // rethrow the exception back to main() 
   }
-  t.join();
+
+  if(t.joinable()){                                                             // if exception happen t is already joined
+    t.join();                                                                   // otherwise t is .join() here and now
+  }
 }
 
 int main(){
@@ -296,6 +316,11 @@ int main(){
 
 
 
+
+
+
+
+
 // Same as above but implement RAII around the thread object 
 // The .join() is now handeled in the destructor
 // ----------------------------------------------------------------------------
@@ -303,6 +328,7 @@ int main(){
 /*
 #include <iostream>
 #include <thread>
+#include <random>
 
 class Safe_Thread{                                                              // Z! This is a naïve RAII implementation
   public:
@@ -318,19 +344,35 @@ class Safe_Thread{                                                              
 };
 
 void My_Thread_Function(){
-  std::cout << "Hello from thread " << __FUNCTION__ << '\n';
+  char const a_char{'_'};
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+  }
 }
 
 void My_Throwing_Function(){
-  for(int i=0; i<10; ++i){                                                      
-    std::cout << "From My_Throwing_Function() : " << i << '\n';                 
+  char const a_char ='-';
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+    if (i==10) throw std::runtime_error( "Exception for the fun." );            
   }
-  throw std::logic_error( "For the fun." );                                     
 }                                                                               
 
 int main(){
 
-  Safe_Thread my_safe_thread {std::thread{My_Thread_Function}};                 // Create a Safe_Thread object and launch the thread
+  //std::thread t {My_Thread_Function};
+  //Safe_Thread my_safe_thread {std::move(t)};                                  // A thread cannot be copied but can be moved
+  Safe_Thread my_safe_thread {std::thread{My_Thread_Function}};                 // Replace the 2 line above
 
   // Do some stuff in main()
   try{                                                                          
@@ -338,9 +380,10 @@ int main(){
   }catch(std::exception const& e){                                              
     std::cout << "Exception caught in main() : " << e.what() << '\n';           // No more .join() in the catch() block                
   }                         
-                                                                                // No more .join() ouside the catch()
-  std::cout << "\nStrike ENTER to exit :";
-  std::cin.get();
+                                                                                // No more .join() outside the catch()
+
+  std::cout << "\nStrike ENTER to exit :";                                      // Press ENTER quickly and watch in the console how the background thread 
+  std::cin.get();                                                               // continues and ends before the application closes the console.
 }
 */
 
@@ -351,83 +394,162 @@ int main(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Implement the try/catch block
-// Second example
+// Exception in the thread
+// Crash at runtime
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
 #include <iostream>
 #include <thread>
-#include <exception>
+#include <random>
 
-void DoTheJob(){
-  for(int i=0; i<10; ++i){
-    std::cout << "From thread " << __FUNCTION__ << " : counter = " << i << '\n';
-  }
-  std::cout << "From thread " << __FUNCTION__ << " : throwing an execption." << '\n';
-  throw std::runtime_error("Exception from thread");
-}
+void fn1(){
+  char const a_char ='_';
 
-void my_threadFunction(std::exception_ptr &err){
-  try{
-    DoTheJob();
-  }catch(...){
-    std::cout << "The thread caught an exception and returns it.\n";
-    err = std::current_exception();
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+    if (i==10) throw std::runtime_error( "Exception for the fun." ); 
   }
 }
 
-void DoJobInThread(){
-  std::exception_ptr err;
-  std::thread t {my_threadFunction, std::ref(err)};
+void fn2(){
+  char const a_char ='-';
 
-  // Do some stuff 
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
 
-  t.join();
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+               
+  }
+}
 
-  if (err){
-    std::cout << "main() thread received an exception. Rethrowing it\n";
-    std::rethrow_exception(err);
-  } else {
-    std::cout << "main() did not received any exception.\n";
+int main(){
+
+  std::thread my_thread(fn1);                                                  
+  fn2();                                                                      
+  my_thread.join();  
+
+  std::cout << "\n\nStrike ENTER to exit :";                                        
+  std::cin.get();
+}
+*/                                                                               
+
+
+
+
+
+
+
+
+// even with a try catch block aroutnt he thread it does'nt work
+// the thread call std::terminate and abort the application
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+/*
+#include <iostream>
+#include <thread>
+#include <random>
+
+void fn1(){
+  char const a_char ='_';
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+    if (i==10) throw std::runtime_error( "Exception for the fun." ); 
+  }
+}
+
+void fn2(){
+  char const a_char ='-';
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+               
   }
 }
 
 int main(){
 
   try{
-    DoJobInThread();
-  }catch(std::exception const &e){
-    std::cout << "main() caught : " << e.what() << '\n';
+    std::thread my_thread(fn1);                                                  
+    my_thread.join();                                                               // somehow ineficient... Sicne we wait here the end of the thread                                          
+  }catch(std::exception const& e){ 
+    std::cout << "Exception intercepted in main() : " << e.what() << '\n';           // No more .join() in the catch() block                
   }
+
+  fn2();                                                                      
   
-  std::cout << "Strike ENTER to exit :";
+  std::cout << "\n\nStrike ENTER to exit :";                                        
   std::cin.get();
 }
-*/
+*/                                                                               
+
+
+
+
+
+
+
+
+
+// async comes to the rescue (again?)
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// /*
+#include <iostream>
+#include <random>
+#include <future>
+
+void fn1(){
+  char const a_char ='_';
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+    if (i==10) throw std::runtime_error( "Exception for the fun." ); 
+  }
+}
+
+void fn2(){
+  char const a_char ='-';
+
+  std::default_random_engine my_dre(a_char);
+  std::uniform_int_distribution<> id(10, 1000);                                 
+
+  for(int i=0; i<20; ++i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(id(my_dre)));
+    std::cout.put(a_char).flush();
+  }
+}
+
+int main(){
+
+  try{
+    auto result = std::async(fn1);
+    fn2();  
+    result.get();                                                               // comment this line and realise that the exception is then NOT prapagated
+  }catch(std::exception const& e){ 
+    std::cout << "Exception propagated back to main() : " << e.what() << '\n';                        
+  }
+  
+  std::cout << "\n\nStrike ENTER to exit :";                                        
+  std::cin.get();
+}
+// */                                                                               

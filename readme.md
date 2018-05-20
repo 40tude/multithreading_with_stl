@@ -102,3 +102,4 @@ If under Windows you use clang with VS Code you might be interrested in this pos
 - [C++ Core Guidelines](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-concurrency) on Concurrency and Parallelism
 - [Is Parallel Programming Hard, And, If So, What Can You Do About It?](https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook-1c.2017.01.02a.pdf)
 - [Bartosz Milewski web site](https://bartoszmilewski.com/category/concurrency/)
+- [The promises and challenges of std::async task-based parallelism in C++11](https://eli.thegreenplace.net/2016/the-promises-and-challenges-of-stdasync-task-based-parallelism-in-c11/)
