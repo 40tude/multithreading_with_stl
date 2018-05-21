@@ -1,4 +1,4 @@
-{    
+{
   "version": "2.0.0",
   "tasks": [
     {
@@ -8,12 +8,14 @@
       "args": [
         "/MDd",
         "/W4",
+        "/WX",
+        "/permissive-",
         "/EHsc",
         "/ZI",
         "/std:c++17",
-        "/Od", 
+        "/Od",
         "/Fe:${workspaceFolder}/Debug/test.exe",
-        "/Fd:${workspaceFolder}/Debug/", 
+        "/Fd:${workspaceFolder}/Debug/",
         "/Fo:${workspaceFolder}/Debug/",
         "main.cpp"
       ],
@@ -29,11 +31,13 @@
       "args": [
         "/MD",
         "/W4",
+        "/WX",
+        "/permissive-",
         "/EHsc",
         "/std:c++17",
         "/O2",
         "/Fe:${workspaceFolder}/Release/test.exe",
-        "/Fd:${workspaceFolder}/Release/", 
+        "/Fd:${workspaceFolder}/Release/",
         "/Fo:${workspaceFolder}/Release/",
         "main.cpp"
       ]
@@ -44,7 +48,7 @@
       "command": "g++",
       "args": [
         "main.cpp",
-        "-g",                    
+        "-g",
         "-Wall",
         "-std=c++17",
         "-o",
