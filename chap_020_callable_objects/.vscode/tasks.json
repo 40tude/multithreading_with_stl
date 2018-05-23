@@ -9,6 +9,7 @@
         "/MDd",
         "/W4",
         "/WX",
+        //"/analyze:WX-",
         "/permissive-",
         "/EHsc",
         "/ZI",
@@ -32,6 +33,7 @@
         "/MD",
         "/W4",
         "/WX",
+        //"/analyze:WX-"
         "/permissive-",
         "/EHsc",
         "/std:c++17",
