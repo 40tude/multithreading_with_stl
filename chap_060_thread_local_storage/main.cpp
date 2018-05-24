@@ -61,9 +61,10 @@ int main(){
 
 
 // Same as above with async()
-// Pay attention to the std::launch::deferred used with the async()
-// Here, no thread are used. MyFunction() is executed in the main() thread
-// This is also why gtl_my_var and g_my_var behave the same way (both like global variables)
+// ATTENTION : look for the 'std::launch::deferred' parameter used with the async()
+// In this case, no thread is used.
+// MyFunction() is executed in the main() thread
+// This is why gtl_my_var and g_my_var behave the same way (both are considered global variables)
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 /*
@@ -115,7 +116,7 @@ int main(){
 
 
 
-// Using std::launch::async ensure a thread is created in order to run MyFunction
+// Using std::launch::async ensure that a thread is created in order to run MyFunction
 // From now, async() will be always using std::launch::async
 // May 20 2018 : I suspect an issue here with the TLS and how cl manage it
 // On the seconde call to Myfunction the TLS should be 200 and NOT 201
